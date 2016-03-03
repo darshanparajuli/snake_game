@@ -16,7 +16,7 @@ int main()
         return EXIT_FAILURE;
     }
 
-    const float units = 10.0f;
+    const float units = 15.0f;
     glm::mat4 projection = glm::ortho(-units, units, -units, units, -1.0f, 100.0f);
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 100.0f), glm::vec3(0.0f, 0.0f, 0.0f),
             glm::vec3(0.0f, 1.0f, 0.0f));
