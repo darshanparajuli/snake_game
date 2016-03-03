@@ -15,12 +15,23 @@ struct snake_body
 
 class Snake : public Entity
 {
+    public:
+        enum Direction
+        {
+            EAST,
+            WEST,
+            NORTH,
+            SOUTH
+        };
+
     private:
         Shader *m_shader;
         Mesh *m_mesh;
         std::deque<snake_body *> m_body;
         float m_size;
         float m_delta_size;
+        bool m_pause_movement;
+        Direction m_dir;
 
     public:
         Snake(const glm::vec3 &init_pos, float size, int body_count);
@@ -28,6 +39,10 @@ class Snake : public Entity
         void init(void);
         void update(float delta);
         void draw(void);
+        void set_move_direction(Snake::Direction dir);
+
+    private:
+        Snake::Direction get_opposite_direction_of(Direction dir);
 };
 
 #endif

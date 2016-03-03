@@ -10,3 +10,6 @@ $(EXECUTABLE): $(HEADERS) $(SOURCES)
 
 run: $(EXECUTABLE)
 	./$(EXECUTABLE)
+
+clean:
+	rm -f $(EXECUTABLE)

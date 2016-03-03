@@ -1,14 +1,18 @@
+#include <iostream>
 #include "snake.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 Snake::Snake(const glm::vec3 &init_pos, float size, int body_count)
 {
-    m_size = size;
+    m_size = (size <= 0) ? 1 : size;
     m_delta_size = 0.0f;
+    m_pause_movement = false;
+    m_dir = NORTH;
+
     for (int i = 0; i < body_count; i++)
     {
         snake_body *body = new snake_body;
-        body->position = init_pos + glm::vec3(0.0f, size * (float) i, 0.0f);
+        body->position = init_pos - glm::vec3(0.0f, m_size * i, 0.0f);
         body->scale_factor = glm::vec2(0.8f, 0.8f);
         m_body.push_back(body);
     }
@@ -31,8 +35,12 @@ Snake::~Snake()
 {
     for (std::deque<snake_body *>::iterator it = m_body.begin(); it != m_body.end(); it++)
     {
-        delete *it;
+        if (*it)
+        {
+            delete *it;
+        }
     }
+
     delete m_shader;
     delete m_mesh;
 }
@@ -47,20 +55,61 @@ void Snake::init()
 
 void Snake::update(float delta)
 {
-    m_delta_size += delta * 2.0f;
+    m_delta_size += delta * 10.0f;
 
     if (m_delta_size > m_size)
     {
         m_delta_size = 0.0f;
-        if (m_body.size() > 0)
-        {
-            snake_body *head = m_body.front();
-            snake_body *tail = m_body.back();
-            m_body.pop_back();
+        snake_body *head = m_body.front();
+        snake_body *tail = m_body.back();
 
-            tail->position.y = head->position.y + m_size;
-            m_body.push_front(tail);
+        switch (m_dir)
+        {
+            case EAST:
+            {
+                tail->position.x = head->position.x + m_size;
+                tail->position.y = head->position.y;
+            }
+            break;
+            case WEST:
+            {
+                tail->position.x = head->position.x - m_size;
+                tail->position.y = head->position.y;
+            }
+            break;
+            case NORTH:
+            {
+                tail->position.x = head->position.x;
+                tail->position.y = head->position.y + m_size;
+            }
+            break;
+            case SOUTH:
+            {
+                tail->position.x = head->position.x;
+                tail->position.y = head->position.y - m_size;
+            }
+            break;
         }
+
+        if (tail->position.x > m_screen_units - m_size)
+        {
+            tail->position.x = -m_screen_units + m_size;
+        }
+        else if (tail->position.x < -m_screen_units + m_size)
+        {
+            tail->position.x = m_screen_units - m_size;
+        }
+        else if (tail->position.y > m_screen_units - m_size)
+        {
+            tail->position.y = -m_screen_units + m_size;
+        }
+        else if (tail->position.y < -m_screen_units + m_size)
+        {
+            tail->position.y = m_screen_units - m_size;
+        }
+
+        m_body.push_front(tail);
+        m_body.pop_back();
     }
 }
 
@@ -78,4 +127,28 @@ void Snake::draw()
     }
     m_shader->unbind();
     m_mesh->unbind();
+}
+
+
+void Snake::set_move_direction(Snake::Direction dir)
+{
+    if (m_dir != get_opposite_direction_of(dir))
+    {
+        m_dir = dir;
+    }
+}
+
+Snake::Direction Snake::get_opposite_direction_of(Snake::Direction dir)
+{
+    switch (dir)
+    {
+        case EAST:
+            return WEST;
+        case WEST:
+            return EAST;
+        case NORTH:
+            return SOUTH;
+        default:
+            return NORTH;
+    }
 }
