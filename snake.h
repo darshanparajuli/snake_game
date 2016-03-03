@@ -11,6 +11,7 @@ struct snake_body
 {
     glm::vec3 position;
     glm::vec2 scale_factor;
+    int dir;
 };
 
 class Snake : public Entity
@@ -31,7 +32,7 @@ class Snake : public Entity
         float m_size;
         float m_delta_size;
         bool m_pause_movement;
-        Direction m_dir;
+        int m_dir;
 
     public:
         Snake(const glm::vec3 &init_pos, float size, int body_count);
@@ -39,10 +40,11 @@ class Snake : public Entity
         void init(void);
         void update(float delta);
         void draw(void);
-        void set_move_direction(Snake::Direction dir);
+        void set_move_direction(int dir);
+        void grow(int body_count);
 
     private:
-        Snake::Direction get_opposite_direction_of(Direction dir);
+        int get_opposite_direction_of(int dir);
 };
 
 #endif

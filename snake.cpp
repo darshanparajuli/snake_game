@@ -11,9 +11,10 @@ Snake::Snake(const glm::vec3 &init_pos, float size, int body_count)
 
     for (int i = 0; i < body_count; i++)
     {
-        snake_body *body = new snake_body;
+        snake_body *body = new snake_body();
         body->position = init_pos - glm::vec3(0.0f, m_size * i, 0.0f);
         body->scale_factor = glm::vec2(0.8f, 0.8f);
+        body->dir = m_dir;
         m_body.push_back(body);
     }
 
@@ -108,6 +109,8 @@ void Snake::update(float delta)
             tail->position.y = m_screen_units - m_size;
         }
 
+        tail->dir = m_dir;
+
         m_body.push_front(tail);
         m_body.pop_back();
     }
@@ -130,15 +133,15 @@ void Snake::draw()
 }
 
 
-void Snake::set_move_direction(Snake::Direction dir)
+void Snake::set_move_direction(int dir)
 {
-    if (m_dir != get_opposite_direction_of(dir))
+    if (m_body.front()->dir != get_opposite_direction_of(dir))
     {
         m_dir = dir;
     }
 }
 
-Snake::Direction Snake::get_opposite_direction_of(Snake::Direction dir)
+int Snake::get_opposite_direction_of(int dir)
 {
     switch (dir)
     {
@@ -152,3 +155,45 @@ Snake::Direction Snake::get_opposite_direction_of(Snake::Direction dir)
             return NORTH;
     }
 }
+
+void Snake::grow(int body_count)
+{
+    for (int i = 0; i < body_count; i++)
+    {
+        snake_body *b = new snake_body();
+        snake_body *tail = m_body.back();
+        b->scale_factor = tail->scale_factor;
+
+        switch (tail->dir)
+        {
+            case EAST:
+            {
+                b->position.x = tail->position.x - m_size;
+                b->position.y = tail->position.y;
+            }
+            break;
+            case WEST:
+            {
+                b->position.x = tail->position.x + m_size;
+                b->position.y = tail->position.y;
+            }
+            break;
+            case NORTH:
+            {
+                b->position.x = tail->position.x;
+                b->position.y = tail->position.y - m_size;
+            }
+            break;
+            default:
+            {
+                b->position.x = tail->position.x;
+                b->position.y = tail->position.y + m_size;
+            }
+            break;
+        }
+
+        b->dir = tail->dir;
+        m_body.push_back(b);
+    }
+}
+
