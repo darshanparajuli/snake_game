@@ -24,7 +24,6 @@ class Entity
             m_screen_units = units;
         }
         inline void set_view_matrix(const glm::mat4 &view) { m_view_matrix = view; }
-        inline void set_model_matrix(const glm::mat4 &model) { m_model_matrix = model; }
 };
 
 #endif

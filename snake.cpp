@@ -8,15 +8,12 @@ Snake::Snake(const glm::vec3 &init_pos, float size, int body_count)
     m_delta_size = 0.0f;
     m_pause_movement = false;
     m_dir = NORTH;
+    m_model_matrix = glm::mat4(1.0f);
+    m_alive = true;
+    m_body_count = body_count;
+    m_init_pos = init_pos;
 
-    for (int i = 0; i < body_count; i++)
-    {
-        snake_body *body = new snake_body();
-        body->position = init_pos - glm::vec3(0.0f, m_size * i, 0.0f);
-        body->scale_factor = glm::vec2(0.8f, 0.8f);
-        body->dir = m_dir;
-        m_body.push_back(body);
-    }
+    init_body();
 
     glm::vec3 vertices[] = {
         glm::vec3(-0.5f, 0.5f, 0.0f),
@@ -34,6 +31,25 @@ Snake::Snake(const glm::vec3 &init_pos, float size, int body_count)
 
 Snake::~Snake()
 {
+    destroy_body();
+    delete m_shader;
+    delete m_mesh;
+}
+
+void Snake::init_body()
+{
+    for (int i = 0; i < m_body_count; i++)
+    {
+        snake_body *body = new snake_body();
+        body->position = m_init_pos - glm::vec3(0.0f, m_size * i, 0.0f);
+        body->scale_factor = glm::vec2(0.8f, 0.8f);
+        body->dir = m_dir;
+        m_body.push_back(body);
+    }
+}
+
+void Snake::destroy_body()
+{
     for (std::deque<snake_body *>::iterator it = m_body.begin(); it != m_body.end(); it++)
     {
         if (*it)
@@ -41,9 +57,7 @@ Snake::~Snake()
             delete *it;
         }
     }
-
-    delete m_shader;
-    delete m_mesh;
+    m_body.clear();
 }
 
 void Snake::init()
@@ -54,11 +68,22 @@ void Snake::init()
     m_shader->unbind();
 }
 
+void Snake::reset()
+{
+    destroy_body();
+    init_body();
+    m_delta_size = 0.0f;
+    m_pause_movement = false;
+    m_dir = NORTH;
+    m_alive = true;
+}
+
 void Snake::update(float delta)
 {
     m_delta_size += delta * 10.0f;
+    m_alive = !check_dead();
 
-    if (m_delta_size > m_size)
+    if (m_delta_size > m_size && m_alive)
     {
         m_delta_size = 0.0f;
         snake_body *head = m_body.front();
@@ -114,6 +139,23 @@ void Snake::update(float delta)
         m_body.push_front(tail);
         m_body.pop_back();
     }
+}
+
+bool Snake::check_dead()
+{
+    snake_body *head = m_body.front();
+    std::deque<snake_body *>::iterator it = m_body.begin();
+    it++;
+    while (it != m_body.end())
+    {
+        snake_body *b = *it;
+        if (b->position.x == head->position.x && b->position.y == head->position.y)
+        {
+            return true;
+        }
+        it++;
+    }
+    return false;
 }
 
 void Snake::draw()

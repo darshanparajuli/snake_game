@@ -21,15 +21,15 @@ int main()
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 100.0f), glm::vec3(0.0f, 0.0f, 0.0f),
             glm::vec3(0.0f, 1.0f, 0.0f));
 
-    Snake snake(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f, 4);
+    Snake snake(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f, 12);
     snake.set_projection_matrix(projection, units);
     snake.set_view_matrix(view);
-    snake.set_model_matrix(glm::mat4(1.0f));
     snake.init();
 
     SDL_Event event;
     bool paused = false;
-    while (window.is_running())
+    bool running = true;
+    while (window.is_running() && running)
     {
         while (SDL_PollEvent(&event))
         {
@@ -80,6 +80,16 @@ int main()
                     case SDLK_RIGHT:
                     {
                         snake.set_move_direction(Snake::EAST);
+                    }
+                    break;
+                    case SDLK_r:
+                    {
+                        snake.reset();
+                    }
+                    break;
+                    case SDLK_q:
+                    {
+                        running = false;
                     }
                     break;
                 }
