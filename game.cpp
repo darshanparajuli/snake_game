@@ -102,6 +102,11 @@ void Game::run()
                         m_running = false;
                     }
                     break;
+                    case SDLK_p:
+                    {
+                        m_paused = !m_paused;
+                    }
+                    break;
                 }
             }
         }
