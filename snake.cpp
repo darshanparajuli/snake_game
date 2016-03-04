@@ -35,7 +35,8 @@ Snake::Snake(const glm::vec3 &init_pos, float size, int body_count)
     m_shader = new Shader();
     m_shader->init("shaders/snake.vert", "shaders/snake.frag");
 
-    m_texture = new Texture("res/textures/block.png");
+    m_tex_snake_head = new Texture("res/textures/snake_head.png");
+    m_tex_snake_body = new Texture("res/textures/snake_body.png");
 }
 
 Snake::~Snake()
@@ -43,6 +44,8 @@ Snake::~Snake()
     destroy_body();
     delete m_shader;
     delete m_mesh;
+    delete m_tex_snake_head;
+    delete m_tex_snake_body;
 }
 
 void Snake::init_body()
@@ -53,6 +56,7 @@ void Snake::init_body()
         body->position = m_init_pos - glm::vec3(0.0f, m_size * i, 0.0f);
         body->scale_factor = glm::vec2(0.8f, 0.8f);
         body->dir = m_dir;
+        body->head = i == 0;
         m_body.push_back(body);
     }
 }
@@ -71,7 +75,9 @@ void Snake::destroy_body()
 
 void Snake::init()
 {
-    m_texture->load();
+    m_tex_snake_head->load();
+    m_tex_snake_body->load();
+
     m_shader->bind();
     m_shader->set_uniform_mat4("projection", m_projection_matrix);
     m_shader->set_uniform_mat4("view", m_view_matrix);
@@ -98,6 +104,9 @@ void Snake::update(float delta)
 
         snake_body *head = m_body.front();
         snake_body *tail = m_body.back();
+
+        head->head = false;
+        tail->head = true;
 
         switch (m_dir)
         {
@@ -173,18 +182,34 @@ bool Snake::check_dead()
 void Snake::draw()
 {
     m_mesh->bind();
-    m_texture->bind();
     m_shader->bind();
     for (std::deque<snake_body *>::reverse_iterator it = m_body.rbegin(); it != m_body.rend(); it++)
     {
         snake_body *b = *it;
+        if (b->head)
+        {
+            m_tex_snake_head->bind();
+        }
+        else
+        {
+            m_tex_snake_body->bind();
+        }
+
         glm::mat4 m = glm::translate(m_model_matrix, b->position);
         m = glm::scale(m, glm::vec3(b->scale_factor, 0.0f));
         m_shader->set_uniform_mat4("model", m);
         m_mesh->draw();
+
+        if (b->head)
+        {
+            m_tex_snake_head->unbind();
+        }
+        else
+        {
+            m_tex_snake_body->unbind();
+        }
     }
     m_shader->unbind();
-    m_texture->unbind();
     m_mesh->unbind();
 }
 
@@ -219,6 +244,7 @@ void Snake::grow(int body_count)
         snake_body *b = new snake_body();
         snake_body *tail = m_body.back();
         b->scale_factor = tail->scale_factor;
+        b->head = false;
 
         switch (tail->dir)
         {

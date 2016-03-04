@@ -14,6 +14,7 @@ struct snake_body
     glm::vec3 position;
     glm::vec2 scale_factor;
     int dir;
+    bool head;
 };
 
 class Snake : public Entity
@@ -30,7 +31,8 @@ class Snake : public Entity
     private:
         Shader *m_shader;
         Mesh *m_mesh;
-        Texture *m_texture;
+        Texture *m_tex_snake_head;;
+        Texture *m_tex_snake_body;
         std::deque<snake_body *> m_body;
         glm::vec3 m_init_pos;
         float m_size;

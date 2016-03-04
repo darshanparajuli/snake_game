@@ -94,7 +94,10 @@ void Game::run()
                     break;
                     case SDLK_r:
                     {
-                        m_snake->reset();
+                        if (!m_snake->is_alive())
+                        {
+                            m_snake->reset();
+                        }
                     }
                     break;
                     case SDLK_q:
