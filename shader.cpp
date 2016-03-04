@@ -102,8 +102,9 @@ void Shader::init(const char *file_path_vertex, const char *file_path_fragment)
         for (std::vector<GLchar>::const_iterator i = info_log.begin();
              i != info_log.end(); i++)
         {
-            std::cout << *i << std::endl;
+            std::cout << *i;
         }
+        std::cout << std::endl;
 
         return;
     }

@@ -2,7 +2,11 @@
 
 out vec4 color;
 
+uniform sampler2D tex;
+
+in vec2 tex_coord;
+
 void main()
 {
-    color = vec4(0.298f, 0.686f, 0.313f, 1.0f);
+    color = texture(tex, tex_coord);
 }

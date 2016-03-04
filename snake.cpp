@@ -23,10 +23,19 @@ Snake::Snake(const glm::vec3 &init_pos, float size, int body_count)
     };
     int indices[] = {0, 1, 2, 0, 2, 3};
 
-    m_mesh = new Mesh(vertices, 4, indices, 6);
+    glm::vec2 tex_coord[] = {
+        glm::vec2(0.0f, 0.0f),
+        glm::vec2(1.0f, 0.0f),
+        glm::vec2(1.0f, 1.0f),
+        glm::vec2(1.0f, 0.0f)
+    };
+
+    m_mesh = new Mesh(vertices, 4, indices, 6, tex_coord, 4);
 
     m_shader = new Shader();
     m_shader->init("shaders/snake.vert", "shaders/snake.frag");
+
+    m_texture = new Texture("res/textures/block.png");
 }
 
 Snake::~Snake()
@@ -62,6 +71,7 @@ void Snake::destroy_body()
 
 void Snake::init()
 {
+    m_texture->load();
     m_shader->bind();
     m_shader->set_uniform_mat4("projection", m_projection_matrix);
     m_shader->set_uniform_mat4("view", m_view_matrix);
@@ -81,11 +91,11 @@ void Snake::reset()
 void Snake::update(float delta)
 {
     m_delta_size += delta * 10.0f;
-    m_alive = !check_dead();
 
     if (m_delta_size > m_size && m_alive)
     {
         m_delta_size = 0.0f;
+
         snake_body *head = m_body.front();
         snake_body *tail = m_body.back();
 
@@ -138,6 +148,8 @@ void Snake::update(float delta)
 
         m_body.push_front(tail);
         m_body.pop_back();
+
+        m_alive = !check_dead();
     }
 }
 
@@ -161,6 +173,7 @@ bool Snake::check_dead()
 void Snake::draw()
 {
     m_mesh->bind();
+    m_texture->bind();
     m_shader->bind();
     for (std::deque<snake_body *>::iterator it = m_body.begin(); it != m_body.end(); it++)
     {
@@ -171,6 +184,7 @@ void Snake::draw()
         m_mesh->draw();
     }
     m_shader->unbind();
+    m_texture->unbind();
     m_mesh->unbind();
 }
 

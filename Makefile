@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS=-std=c++11 -Wall -O0 -g -pipe
-LFLAGS=-lSDL2 -lGL -lGLU -lGLEW
+LFLAGS=-lSDL2 -lSDL2_image -lGL -lGLU -lGLEW
 HEADERS=*.h
 SOURCES=*.cpp
 EXECUTABLE=snake

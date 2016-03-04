@@ -14,11 +14,10 @@ public:
     Food(glm::vec3 &pos, glm::vec3 &color);
     ~Food();
 
+    void init(void);
     void update(float delta);
-    void render();
+    void draw();
 
-    inline glm::vec3 get_position() const { return m_pos; }
-    inline glm::vec3 get_color() const { return m_color; }
 };
 
 #endif

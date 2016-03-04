@@ -9,12 +9,14 @@ Food::~Food()
 {
 }
 
-void Food::update(float delta)
+void Food::init()
 {
-
 }
 
-void Food::render()
+void Food::update(float delta)
 {
+}
 
+void Food::draw()
+{
 }

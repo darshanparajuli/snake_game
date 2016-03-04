@@ -7,6 +7,7 @@
 #include "mesh.h"
 #include "shader.h"
 #include "entity.h"
+#include "texture.h"
 
 struct snake_body
 {
@@ -29,6 +30,7 @@ class Snake : public Entity
     private:
         Shader *m_shader;
         Mesh *m_mesh;
+        Texture *m_texture;
         std::deque<snake_body *> m_body;
         glm::vec3 m_init_pos;
         float m_size;

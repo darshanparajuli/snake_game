@@ -7,11 +7,11 @@
 class Mesh
 {
 private:
-    GLuint m_vao, m_vbo, m_ibo;
+    GLuint m_vao, m_vbo, m_ibo, m_tbo;
     unsigned int m_icount;
 
 public:
-    Mesh(glm::vec3 *vertices, int vcount, int *indices, int icount);
+    Mesh(glm::vec3 *vertices, int vcount, int *indices, int icount, glm::vec2 *tex_coord, int tcount);
     ~Mesh();
     void bind(void);
     void unbind(void);

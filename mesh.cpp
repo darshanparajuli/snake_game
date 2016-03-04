@@ -1,6 +1,6 @@
 #include "mesh.h"
 
-Mesh::Mesh(glm::vec3 *vertices, int vcount, int *indices, int icount)
+Mesh::Mesh(glm::vec3 *vertices, int vcount, int *indices, int icount, glm::vec2 *tex_coord, int tcount)
 {
     m_icount = icount;
 
@@ -16,6 +16,12 @@ Mesh::Mesh(glm::vec3 *vertices, int vcount, int *indices, int icount)
     glGenBuffers(1, &m_ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, icount * sizeof(int), indices, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &m_tbo);
+    glBindBuffer(GL_ARRAY_BUFFER, m_tbo);
+    glBufferData(GL_ARRAY_BUFFER, tcount * sizeof(tex_coord[0]), tex_coord, GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -35,6 +41,10 @@ Mesh::~Mesh()
     if (m_ibo)
     {
         glDeleteBuffers(1, &m_ibo);
+    }
+    if (m_tbo)
+    {
+        glDeleteBuffers(1, &m_tbo);
     }
 }
 
