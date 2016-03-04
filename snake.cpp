@@ -175,7 +175,7 @@ void Snake::draw()
     m_mesh->bind();
     m_texture->bind();
     m_shader->bind();
-    for (std::deque<snake_body *>::iterator it = m_body.begin(); it != m_body.end(); it++)
+    for (std::deque<snake_body *>::reverse_iterator it = m_body.rbegin(); it != m_body.rend(); it++)
     {
         snake_body *b = *it;
         glm::mat4 m = glm::translate(m_model_matrix, b->position);
