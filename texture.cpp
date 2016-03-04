@@ -3,7 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-Texture::Texture(char *file_path)
+Texture::Texture(const char *file_path)
     : m_id(0), m_path(file_path), m_width(0), m_height(0)
 {
 }
@@ -16,13 +16,13 @@ Texture::~Texture()
     }
 }
 
-bool Texture::load()
+void Texture::load()
 {
     SDL_Surface *surface = IMG_Load(m_path);
     if (!surface)
     {
         std::cerr << "Error loading image: " << m_path << std::endl;
-        return false;
+        return;
     }
 
     int mode;
@@ -38,7 +38,7 @@ bool Texture::load()
     {
         std::cerr << "Error detecting mode" << std::endl;
         SDL_FreeSurface(surface);
-        return false;
+        return;
     }
 
     m_width = surface->w;
@@ -50,12 +50,10 @@ bool Texture::load()
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    
+
     glBindTexture(GL_TEXTURE_2D, 0);
 
     SDL_FreeSurface(surface);
-
-    return true;
 }
 
 void Texture::bind()

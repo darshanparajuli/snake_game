@@ -7,19 +7,16 @@ class Texture
 {
     private:
         GLuint m_id;
-        char *m_path;
+        const char *m_path;
         int m_width;
         int m_height;
 
     public:
-        Texture(char *file_path);
+        Texture(const char *file_path);
         ~Texture();
-        bool load();
+        void load();
         void bind();
         void unbind();
-
-        inline int get_width() const { return m_width; }
-        inline int get_height() const { return m_height; }
 };
 
 #endif
