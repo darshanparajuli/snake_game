@@ -1,7 +1,6 @@
 #ifndef GAME_H_
 #define GAME_H_
 
-#include <vector>
 #include <glm/glm.hpp>
 #include "game_window.h"
 #include "snake.h"
@@ -18,8 +17,8 @@ class Game
         WorldSize m_world_size;
 
         Snake *m_snake;
+        Food *m_food;
         World *m_world;
-        std::vector<Food *> m_foods;
         bool m_running;
         bool m_paused;
 
@@ -32,7 +31,6 @@ class Game
         void handle_input(const SDL_Event &event);
         void update(float delta);
         void draw(void);
-        void add_food(void);
 };
 
 #endif

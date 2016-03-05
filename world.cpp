@@ -1,4 +1,5 @@
 #include "world.h"
+#include <iostream>
 
 World::World(int row_count, int col_count)
     : m_row_count(row_count), m_col_count(col_count)
@@ -33,10 +34,27 @@ void World::reset()
 
 void World::set_value(int row, int col, int value)
 {
+    row += m_row_count / 2;
+    col += m_col_count / 2;
     m_grid[row][col] = value;
 }
 
 int World::get_value(int row, int col)
 {
+    row += m_row_count / 2;
+    col += m_col_count / 2;
     return m_grid[row][col];
+}
+
+void World::print()
+{
+    std::cout << "World" << std::endl;
+    for (int r = 0; r < m_row_count; r++)
+    {
+        for (int c = 0; c < m_col_count; c++)
+        {
+            std::cout << m_grid[r][c] << " ";
+        }
+        std::cout << std::endl;
+    }
 }

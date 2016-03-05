@@ -18,12 +18,13 @@ class Food: public Entity
         float m_scale_delta;
 
     public:
-        Food(glm::vec3 pos);
+        Food(World *world);
         ~Food();
 
         void init(void);
         void update(float delta);
         void draw();
+        bool place_food(void);
 
     public:
         inline bool is_eaten() const { return m_eaten; }

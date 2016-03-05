@@ -2,11 +2,12 @@
 #include "snake.h"
 #include <glm/gtc/matrix_transform.hpp>
 
-Snake::Snake(glm::vec3 init_pos, int body_count)
-    : Entity()
+Snake::Snake(World *world, glm::vec3 init_pos, int body_count)
+    : Entity(world)
 {
     m_size = 1.0f;
     m_delta_size = 0.0f;
+    m_growth_delta = 10.0f;
     m_pause_movement = false;
     m_dir = NORTH;
     m_model_matrix = glm::mat4(1.0f);
@@ -89,6 +90,7 @@ void Snake::reset()
     destroy_body();
     init_body();
     m_delta_size = 0.0f;
+    m_growth_delta = 10.0f;
     m_pause_movement = false;
     m_dir = NORTH;
     m_alive = true;
@@ -96,88 +98,102 @@ void Snake::reset()
 
 void Snake::update(float delta)
 {
-    m_delta_size += delta * 10.0f;
+    m_delta_size += delta * m_growth_delta;
 
-    if (m_delta_size > m_size && m_alive)
+    while (m_delta_size > m_size && m_alive)
     {
-        m_delta_size = 0.0f;
+        m_delta_size -= m_size;
+        if (m_delta_size < m_size)
+        {
+            m_delta_size = 0.0f;
+        }
+        snake_body *tail = m_body.back();
+        m_world->set_value((int) tail->transform.position.y, (int) tail->transform.position.x, World::EMPTY);
+
+        move();
 
         snake_body *head = m_body.front();
-        snake_body *tail = m_body.back();
-
-        head->head = false;
-        tail->head = true;
-
-        switch (m_dir)
+        if (m_world->get_value((int) head->transform.position.y, (int) head->transform.position.x) == World::SNAKE)
         {
-            case EAST:
+            m_alive = false;
+        }
+        else
+        {
+            for (std::deque<snake_body *>::iterator it = m_body.begin(); it != m_body.end(); it++)
             {
-                tail->transform.position.x = head->transform.position.x + m_size;
-                tail->transform.position.y = head->transform.position.y;
-            }
-            break;
-            case WEST:
-            {
-                tail->transform.position.x = head->transform.position.x - m_size;
-                tail->transform.position.y = head->transform.position.y;
-            }
-            break;
-            case NORTH:
-            {
-                tail->transform.position.x = head->transform.position.x;
-                tail->transform.position.y = head->transform.position.y + m_size;
-            }
-            break;
-            case SOUTH:
-            {
-                tail->transform.position.x = head->transform.position.x;
-                tail->transform.position.y = head->transform.position.y - m_size;
-            }
-            break;
-        }
+                snake_body *b = *it;
 
-        if (tail->transform.position.x > m_world_size.right - m_size)
-        {
-            tail->transform.position.x = m_world_size.left + m_size;
-        }
-        else if (tail->transform.position.x < m_world_size.left + m_size)
-        {
-            tail->transform.position.x = m_world_size.right - m_size;
-        }
-        else if (tail->transform.position.y > m_world_size.top - m_size)
-        {
-            tail->transform.position.y = m_world_size.bottom + m_size;
-        }
-        else if (tail->transform.position.y < m_world_size.bottom + m_size)
-        {
-            tail->transform.position.y = m_world_size.top - m_size;
-        }
+                int row = (int) b->transform.position.y;
+                int col = (int) b->transform.position.x;
 
-        tail->dir = m_dir;
-
-        m_body.push_front(tail);
-        m_body.pop_back();
-
-        m_alive = !check_dead();
+                if (m_world->get_value(row, col) == World::FOOD)
+                {
+                    grow();
+                    m_growth_delta += GROWTH_SPEED;
+                }
+                m_world->set_value(row, col, World::SNAKE);
+            }
+        }
     }
 }
 
-bool Snake::check_dead()
+void Snake::move()
 {
     snake_body *head = m_body.front();
-    std::deque<snake_body *>::iterator it = m_body.begin();
-    it++;
-    while (it != m_body.end())
+    snake_body *tail = m_body.back();
+
+    head->head = false;
+    tail->head = true;
+
+    switch (m_dir)
     {
-        snake_body *b = *it;
-        if (b->transform.position.x == head->transform.position.x &&
-                b->transform.position.y == head->transform.position.y)
+        case EAST:
         {
-            return true;
+            tail->transform.position.x = head->transform.position.x + m_size;
+            tail->transform.position.y = head->transform.position.y;
         }
-        it++;
+        break;
+        case WEST:
+        {
+            tail->transform.position.x = head->transform.position.x - m_size;
+            tail->transform.position.y = head->transform.position.y;
+        }
+        break;
+        case NORTH:
+        {
+            tail->transform.position.x = head->transform.position.x;
+            tail->transform.position.y = head->transform.position.y + m_size;
+        }
+        break;
+        case SOUTH:
+        {
+            tail->transform.position.x = head->transform.position.x;
+            tail->transform.position.y = head->transform.position.y - m_size;
+        }
+        break;
     }
-    return false;
+
+    if (tail->transform.position.x > m_world_size.right - m_size)
+    {
+        tail->transform.position.x = m_world_size.left + m_size;
+    }
+    else if (tail->transform.position.x < m_world_size.left + m_size)
+    {
+        tail->transform.position.x = m_world_size.right - m_size;
+    }
+    else if (tail->transform.position.y > m_world_size.top - m_size)
+    {
+        tail->transform.position.y = m_world_size.bottom + m_size;
+    }
+    else if (tail->transform.position.y < m_world_size.bottom + m_size)
+    {
+        tail->transform.position.y = m_world_size.top - m_size;
+    }
+
+    tail->dir = m_dir;
+
+    m_body.push_front(tail);
+    m_body.pop_back();
 }
 
 void Snake::draw()
@@ -245,33 +261,33 @@ void Snake::grow(int body_count)
         b->transform = tail->transform;
         b->head = false;
 
-        switch (tail->dir)
-        {
-            case EAST:
-            {
-                b->transform.position.x = tail->transform.position.x - m_size;
-                b->transform.position.y = tail->transform.position.y;
-            }
-            break;
-            case WEST:
-            {
-                b->transform.position.x = tail->transform.position.x + m_size;
-                b->transform.position.y = tail->transform.position.y;
-            }
-            break;
-            case NORTH:
-            {
-                b->transform.position.x = tail->transform.position.x;
-                b->transform.position.y = tail->transform.position.y - m_size;
-            }
-            break;
-            default:
-            {
-                b->transform.position.x = tail->transform.position.x;
-                b->transform.position.y = tail->transform.position.y + m_size;
-            }
-            break;
-        }
+        // switch (tail->dir)
+        // {
+        //     case EAST:
+        //     {
+        //         b->transform.position.x = tail->transform.position.x - m_size;
+        //         b->transform.position.y = tail->transform.position.y;
+        //     }
+        //     break;
+        //     case WEST:
+        //     {
+        //         b->transform.position.x = tail->transform.position.x + m_size;
+        //         b->transform.position.y = tail->transform.position.y;
+        //     }
+        //     break;
+        //     case NORTH:
+        //     {
+        //         b->transform.position.x = tail->transform.position.x;
+        //         b->transform.position.y = tail->transform.position.y - m_size;
+        //     }
+        //     break;
+        //     default:
+        //     {
+        //         b->transform.position.x = tail->transform.position.x;
+        //         b->transform.position.y = tail->transform.position.y + m_size;
+        //     }
+        //     break;
+        // }
 
         b->dir = tail->dir;
         m_body.push_back(b);

@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include "transform.h"
+#include "world.h"
 
 struct WorldSize
 {
@@ -15,6 +16,7 @@ struct WorldSize
 class Entity
 {
     protected:
+        World *m_world;
         WorldSize m_world_size;
         glm::mat4 m_projection_matrix;
         glm::mat4 m_view_matrix;
@@ -22,7 +24,7 @@ class Entity
         Transform m_transform;
 
     public:
-        Entity();
+        Entity(World *world);
         virtual ~Entity();
         virtual void init(void) = 0;
         virtual void update(float delta) = 0;

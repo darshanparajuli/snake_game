@@ -29,6 +29,7 @@ class Snake : public Entity
         };
 
     private:
+        const float GROWTH_SPEED = 1.0f;
         Shader *m_shader;
         Mesh *m_mesh;
         Texture *m_tex_snake_head;;
@@ -41,23 +42,24 @@ class Snake : public Entity
         bool m_pause_movement;
         int m_dir;
         bool m_alive;
+        float m_growth_delta;
 
     public:
-        Snake(glm::vec3 init_pos, int body_count);
+        Snake(World *world, glm::vec3 init_pos, int body_count);
         ~Snake();
         void init(void);
         void update(float delta);
         void draw(void);
         void set_move_direction(int dir);
-        void grow(int body_count);
+        void grow(int body_count = 1);
         void reset(void);
 
         inline bool is_alive(void) const { return m_alive; }
 
     private:
         int get_opposite_direction_of(int dir);
-        bool check_dead(void);
         void init_body(void);
+        void move(void);
         void destroy_body(void);
 };
 

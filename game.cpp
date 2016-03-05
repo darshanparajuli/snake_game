@@ -1,6 +1,7 @@
+#include "game.h"
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
-#include "game.h"
+#include <time.h>
 
 Game::Game()
 {
@@ -16,27 +17,33 @@ Game::Game()
     }
     m_paused = false;
 
+    const int world_width = 40;
+    const int world_height = 40;
 
-    const float world_width = 20.0f;
-    const float world_height = 20.0f;
+    m_world = new World(world_height + 1, world_width + 1);
+    m_world_size.left = -world_width / 2.0f;
+    m_world_size.top = world_height / 2.0f;
+    m_world_size.right = world_width / 2.0f;
+    m_world_size.bottom = -world_height / 2.0f;
 
-    m_world = new World((int) world_height * 2, (int) world_width * 2);
-
-    m_projection_matrix = glm::ortho(-world_width, world_width, -world_height, world_height, -1.0f, 100.0f);
+    m_projection_matrix = glm::ortho(m_world_size.left, m_world_size.right, m_world_size.bottom,
+            m_world_size.top, -1.0f, 100.0f);
     m_view_matrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 100.0f), glm::vec3(0.0f, 0.0f, 0.0f),
             glm::vec3(0.0f, 1.0f, 0.0f));
-    m_world_size.left = -world_width;
-    m_world_size.top = world_height;
-    m_world_size.right = world_width;
-    m_world_size.bottom = -world_height;
 
-    m_snake = new Snake(glm::vec3(0.0f, 0.0f, 0.0f), 4);
-    m_snake->set_world_size(-world_width, world_height, world_width, -world_height);
+    m_snake = new Snake(m_world, glm::vec3(0.0f, 0.0f, 0.0f), 4);
+    m_snake->set_world_size(m_world_size.left, m_world_size.right, m_world_size.top, m_world_size.bottom);
     m_snake->set_projection_matrix(m_projection_matrix);
     m_snake->set_view_matrix(m_view_matrix);
     m_snake->init();
 
-    add_food();
+    m_food = new Food(m_world);
+    m_food->set_world_size(m_world_size.left, m_world_size.top, m_world_size.right, m_world_size.bottom);
+    m_food->set_projection_matrix(m_projection_matrix);
+    m_food->set_view_matrix(m_view_matrix);
+    m_food->init();
+
+    std::srand(time(NULL));
 }
 
 Game::~Game()
@@ -46,11 +53,7 @@ Game::~Game()
         delete m_window;
     }
     delete m_snake;
-
-    for (std::vector<Food *>::iterator it = m_foods.begin(); it != m_foods.end(); it++)
-    {
-        delete *it;
-    }
+    delete m_food;
 }
 
 void Game::run()
@@ -156,30 +159,22 @@ void Game::update(float delta)
 
     m_snake->update(delta);
 
-    for (std::vector<Food *>::iterator it = m_foods.begin(); it != m_foods.end(); it++)
+    m_food->update(delta);
+    if (m_food->is_eaten())
     {
-        Food *food = *it;
-        food->update(delta);
+        if (!m_food->place_food())
+        {
+            // win
+        }
     }
+
+    // for debugging
+    // m_world->print();
 }
 
 void Game::draw()
 {
-    for (std::vector<Food *>::iterator it = m_foods.begin(); it != m_foods.end(); it++)
-    {
-        Food *food = *it;
-        food->draw();
-    }
+    m_food->draw();
     m_snake->draw();
-}
-
-void Game::add_food()
-{
-    Food *food = new Food(glm::vec3(0.0f, 0.0f, 0.0f));
-    food->set_world_size(m_world_size.left, m_world_size.top, m_world_size.right, m_world_size.bottom);
-    food->set_projection_matrix(m_projection_matrix);
-    food->set_view_matrix(m_view_matrix);
-    food->init();
-    m_foods.push_back(food);
 }
 
