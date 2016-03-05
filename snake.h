@@ -29,7 +29,7 @@ class Snake : public Entity
         };
 
     private:
-        const float GROWTH_SPEED = 1.0f;
+        const float MOVE_SPEED = 0.1f;
         Shader *m_shader;
         Mesh *m_mesh;
         Texture *m_tex_snake_head;;
@@ -42,7 +42,7 @@ class Snake : public Entity
         bool m_pause_movement;
         int m_dir;
         bool m_alive;
-        float m_growth_delta;
+        float m_move_speed;
 
     public:
         Snake(World *world, glm::vec3 init_pos, int body_count);

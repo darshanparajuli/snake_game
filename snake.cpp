@@ -7,7 +7,7 @@ Snake::Snake(World *world, glm::vec3 init_pos, int body_count)
 {
     m_size = 1.0f;
     m_delta_size = 0.0f;
-    m_growth_delta = 10.0f;
+    m_move_speed = 10.0f;
     m_pause_movement = false;
     m_dir = NORTH;
     m_model_matrix = glm::mat4(1.0f);
@@ -90,7 +90,7 @@ void Snake::reset()
     destroy_body();
     init_body();
     m_delta_size = 0.0f;
-    m_growth_delta = 10.0f;
+    m_move_speed = MOVE_SPEED;
     m_pause_movement = false;
     m_dir = NORTH;
     m_alive = true;
@@ -98,7 +98,7 @@ void Snake::reset()
 
 void Snake::update(float delta)
 {
-    m_delta_size += delta * m_growth_delta;
+    m_delta_size += delta * m_move_speed;
 
     while (m_delta_size > m_size && m_alive)
     {
@@ -129,7 +129,7 @@ void Snake::update(float delta)
                 if (m_world->get_value(row, col) == World::FOOD)
                 {
                     grow();
-                    m_growth_delta += GROWTH_SPEED;
+                    m_move_speed += MOVE_SPEED;
                 }
                 m_world->set_value(row, col, World::SNAKE);
             }
