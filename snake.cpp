@@ -7,7 +7,7 @@ Snake::Snake(World *world, glm::vec3 init_pos, int body_count)
 {
     m_size = 1.0f;
     m_delta_size = 0.0f;
-    m_move_speed = 10.0f;
+    m_move_speed = INIT_SPEED;
     m_pause_movement = false;
     m_dir = NORTH;
     m_model_matrix = glm::mat4(1.0f);
@@ -90,8 +90,8 @@ void Snake::reset()
     destroy_body();
     init_body();
     m_delta_size = 0.0f;
-    m_move_speed = MOVE_SPEED;
-    m_pause_movement = false;
+    m_move_speed = INIT_SPEED;
+    m_pause_movement = true;
     m_dir = NORTH;
     m_alive = true;
 }

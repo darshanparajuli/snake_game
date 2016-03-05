@@ -30,6 +30,7 @@ class Snake : public Entity
 
     private:
         const float MOVE_SPEED = 0.1f;
+        const float INIT_SPEED = 6.0f;
         Shader *m_shader;
         Mesh *m_mesh;
         Texture *m_tex_snake_head;;

@@ -21,6 +21,7 @@ class Game
         World *m_world;
         bool m_running;
         bool m_paused;
+        bool m_initial_pause;
 
     public:
         Game();

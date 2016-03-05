@@ -16,6 +16,7 @@ Game::Game()
         m_running = true;
     }
     m_paused = false;
+    m_initial_pause = true;
 
     const int world_width = 40;
     const int world_height = 40;
@@ -111,21 +112,25 @@ void Game::handle_input(const SDL_Event &event)
             case SDLK_UP:
             {
                 m_snake->set_move_direction(Snake::NORTH);
+                m_initial_pause = false;
             }
             break;
             case SDLK_DOWN:
             {
                 m_snake->set_move_direction(Snake::SOUTH);
+                m_initial_pause = false;
             }
             break;
             case SDLK_LEFT:
             {
                 m_snake->set_move_direction(Snake::WEST);
+                m_initial_pause = false;
             }
             break;
             case SDLK_RIGHT:
             {
                 m_snake->set_move_direction(Snake::EAST);
+                m_initial_pause = false;
             }
             break;
             case SDLK_r:
@@ -133,6 +138,7 @@ void Game::handle_input(const SDL_Event &event)
                 if (!m_snake->is_alive())
                 {
                     m_snake->reset();
+                    m_initial_pause = true;
                 }
             }
             break;
@@ -152,12 +158,10 @@ void Game::handle_input(const SDL_Event &event)
 
 void Game::update(float delta)
 {
-    if (m_paused)
+    if (!m_paused && !m_initial_pause)
     {
-        return;
+        m_snake->update(delta);
     }
-
-    m_snake->update(delta);
 
     m_food->update(delta);
     if (m_food->is_eaten())
