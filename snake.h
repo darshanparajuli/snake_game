@@ -8,11 +8,11 @@
 #include "shader.h"
 #include "entity.h"
 #include "texture.h"
+#include "transform.h"
 
 struct snake_body
 {
-    glm::vec3 position;
-    glm::vec2 scale_factor;
+    Transform transform;
     int dir;
     bool head;
 };
@@ -43,7 +43,7 @@ class Snake : public Entity
         bool m_alive;
 
     public:
-        Snake(const glm::vec3 &init_pos, float size, int body_count);
+        Snake(glm::vec3 init_pos, int body_count);
         ~Snake();
         void init(void);
         void update(float delta);

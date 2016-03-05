@@ -2,9 +2,10 @@
 #include "snake.h"
 #include <glm/gtc/matrix_transform.hpp>
 
-Snake::Snake(const glm::vec3 &init_pos, float size, int body_count)
+Snake::Snake(glm::vec3 init_pos, int body_count)
+    : Entity()
 {
-    m_size = (size <= 0) ? 1 : size;
+    m_size = 1.0f;
     m_delta_size = 0.0f;
     m_pause_movement = false;
     m_dir = NORTH;
@@ -12,8 +13,6 @@ Snake::Snake(const glm::vec3 &init_pos, float size, int body_count)
     m_alive = true;
     m_body_count = body_count;
     m_init_pos = init_pos;
-
-    init_body();
 
     glm::vec3 vertices[] = {
         glm::vec3(-0.5f, 0.5f, 0.0f),
@@ -27,14 +26,11 @@ Snake::Snake(const glm::vec3 &init_pos, float size, int body_count)
         glm::vec2(0.0f, 0.0f),
         glm::vec2(1.0f, 0.0f),
         glm::vec2(1.0f, 1.0f),
-        glm::vec2(1.0f, 0.0f)
+        glm::vec2(0.0f, 1.0f)
     };
 
     m_mesh = new Mesh(vertices, 4, indices, 6, tex_coord, 4);
-
     m_shader = new Shader();
-    m_shader->init("shaders/snake.vert", "shaders/snake.frag");
-
     m_tex_snake_head = new Texture("res/textures/snake_head.png");
     m_tex_snake_body = new Texture("res/textures/snake_body.png");
 }
@@ -53,8 +49,9 @@ void Snake::init_body()
     for (int i = 0; i < m_body_count; i++)
     {
         snake_body *body = new snake_body();
-        body->position = m_init_pos - glm::vec3(0.0f, m_size * i, 0.0f);
-        body->scale_factor = glm::vec2(0.8f, 0.8f);
+        body->transform.position = m_init_pos - glm::vec3(0.0f, m_size * i, 0.0f);
+        body->transform.scale = m_transform.scale;
+        body->transform.rotation = m_transform.rotation;
         body->dir = m_dir;
         body->head = i == 0;
         m_body.push_back(body);
@@ -75,6 +72,9 @@ void Snake::destroy_body()
 
 void Snake::init()
 {
+    init_body();
+    m_shader->init("shaders/snake.vert", "shaders/snake.frag");
+
     m_tex_snake_head->load();
     m_tex_snake_body->load();
 
@@ -112,45 +112,45 @@ void Snake::update(float delta)
         {
             case EAST:
             {
-                tail->position.x = head->position.x + m_size;
-                tail->position.y = head->position.y;
+                tail->transform.position.x = head->transform.position.x + m_size;
+                tail->transform.position.y = head->transform.position.y;
             }
             break;
             case WEST:
             {
-                tail->position.x = head->position.x - m_size;
-                tail->position.y = head->position.y;
+                tail->transform.position.x = head->transform.position.x - m_size;
+                tail->transform.position.y = head->transform.position.y;
             }
             break;
             case NORTH:
             {
-                tail->position.x = head->position.x;
-                tail->position.y = head->position.y + m_size;
+                tail->transform.position.x = head->transform.position.x;
+                tail->transform.position.y = head->transform.position.y + m_size;
             }
             break;
             case SOUTH:
             {
-                tail->position.x = head->position.x;
-                tail->position.y = head->position.y - m_size;
+                tail->transform.position.x = head->transform.position.x;
+                tail->transform.position.y = head->transform.position.y - m_size;
             }
             break;
         }
 
-        if (tail->position.x > m_screen_units - m_size)
+        if (tail->transform.position.x > m_world_size.right - m_size)
         {
-            tail->position.x = -m_screen_units + m_size;
+            tail->transform.position.x = m_world_size.left + m_size;
         }
-        else if (tail->position.x < -m_screen_units + m_size)
+        else if (tail->transform.position.x < m_world_size.left + m_size)
         {
-            tail->position.x = m_screen_units - m_size;
+            tail->transform.position.x = m_world_size.right - m_size;
         }
-        else if (tail->position.y > m_screen_units - m_size)
+        else if (tail->transform.position.y > m_world_size.top - m_size)
         {
-            tail->position.y = -m_screen_units + m_size;
+            tail->transform.position.y = m_world_size.bottom + m_size;
         }
-        else if (tail->position.y < -m_screen_units + m_size)
+        else if (tail->transform.position.y < m_world_size.bottom + m_size)
         {
-            tail->position.y = m_screen_units - m_size;
+            tail->transform.position.y = m_world_size.top - m_size;
         }
 
         tail->dir = m_dir;
@@ -170,7 +170,8 @@ bool Snake::check_dead()
     while (it != m_body.end())
     {
         snake_body *b = *it;
-        if (b->position.x == head->position.x && b->position.y == head->position.y)
+        if (b->transform.position.x == head->transform.position.x &&
+                b->transform.position.y == head->transform.position.y)
         {
             return true;
         }
@@ -195,9 +196,7 @@ void Snake::draw()
             m_tex_snake_body->bind();
         }
 
-        glm::mat4 m = glm::translate(m_model_matrix, b->position);
-        m = glm::scale(m, glm::vec3(b->scale_factor, 0.0f));
-        m_shader->set_uniform_mat4("model", m);
+        m_shader->set_uniform_mat4("model", b->transform.apply_transform(m_model_matrix));
         m_mesh->draw();
 
         if (b->head)
@@ -243,33 +242,33 @@ void Snake::grow(int body_count)
     {
         snake_body *b = new snake_body();
         snake_body *tail = m_body.back();
-        b->scale_factor = tail->scale_factor;
+        b->transform = tail->transform;
         b->head = false;
 
         switch (tail->dir)
         {
             case EAST:
             {
-                b->position.x = tail->position.x - m_size;
-                b->position.y = tail->position.y;
+                b->transform.position.x = tail->transform.position.x - m_size;
+                b->transform.position.y = tail->transform.position.y;
             }
             break;
             case WEST:
             {
-                b->position.x = tail->position.x + m_size;
-                b->position.y = tail->position.y;
+                b->transform.position.x = tail->transform.position.x + m_size;
+                b->transform.position.y = tail->transform.position.y;
             }
             break;
             case NORTH:
             {
-                b->position.x = tail->position.x;
-                b->position.y = tail->position.y - m_size;
+                b->transform.position.x = tail->transform.position.x;
+                b->transform.position.y = tail->transform.position.y - m_size;
             }
             break;
             default:
             {
-                b->position.x = tail->position.x;
-                b->position.y = tail->position.y + m_size;
+                b->transform.position.x = tail->transform.position.x;
+                b->transform.position.y = tail->transform.position.y + m_size;
             }
             break;
         }

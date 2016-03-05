@@ -30,3 +30,13 @@ void World::reset()
         }
     }
 }
+
+void World::set_value(int row, int col, int value)
+{
+    m_grid[row][col] = value;
+}
+
+int World::get_value(int row, int col)
+{
+    return m_grid[row][col];
+}
