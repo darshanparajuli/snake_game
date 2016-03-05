@@ -5,10 +5,12 @@ Food::Food(World *world)
     : Entity(world)
 {
     m_eaten = false;
-    m_scale = 0.65f;
-    m_scale_delta = 0.5f;
+    m_scale = 1.0f;
+    m_rotation = 0.0f;
+    m_rotation_delta = 1.5f;
+    m_scale_delta = 0.75f;
     m_transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
-    m_transform.scale = glm::vec3(0.8f, 0.8f, 1.0f);
+    m_transform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
 
     glm::vec3 vertices[] = {
         glm::vec3(-0.5f, 0.5f, 0.0f),
@@ -55,20 +57,27 @@ void Food::init()
 void Food::update(float delta)
 {
     m_scale += delta * m_scale_delta;
+    m_rotation += delta * m_rotation_delta;
 
-    if (m_scale > 0.8f)
+    if (m_scale > 1.0f)
     {
-        m_scale = 0.8f;
+        m_scale = 1.0f;
         m_scale_delta = -m_scale_delta;
     }
-    else if (m_scale < 0.65f)
+    else if (m_scale < 0.5f)
     {
-        m_scale = 0.65f;
+        m_scale = 0.5f;
         m_scale_delta = -m_scale_delta;
+    }
+
+    if (m_rotation > 360.0f)
+    {
+        m_rotation = 0.0f;
     }
 
     m_transform.scale.x = m_scale;
     m_transform.scale.y = m_scale;
+    m_transform.rotation = m_rotation;
 
     int row = (int) m_transform.position.y;
     int col = (int) m_transform.position.x;

@@ -123,7 +123,7 @@ void GameWindow::update()
     unsigned int diff = time - m_prev_frame_time;
     if (diff >= 1000)
     {
-        std::cout << "fps: " << m_frame_count << std::endl;
+        // std::cout << "fps: " << m_frame_count << std::endl;
         m_prev_frame_time = time;
         m_frame_count = 0;
     }

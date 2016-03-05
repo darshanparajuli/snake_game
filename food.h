@@ -15,6 +15,8 @@ class Food: public Entity
         Shader *m_shader;
         bool m_eaten;
         float m_scale;
+        float m_rotation;
+        float m_rotation_delta;
         float m_scale_delta;
 
     public:
