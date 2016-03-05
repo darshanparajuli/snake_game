@@ -137,8 +137,7 @@ void Game::handle_input(const SDL_Event &event)
             {
                 if (!m_snake->is_alive())
                 {
-                    m_snake->reset();
-                    m_initial_pause = true;
+                    reset();
                 }
             }
             break;
@@ -182,3 +181,10 @@ void Game::draw()
     m_snake->draw();
 }
 
+void Game::reset()
+{
+    m_world->reset();
+    m_snake->reset();
+    m_initial_pause = true;
+    m_food->place_food();
+}

@@ -32,6 +32,7 @@ class Game
         void handle_input(const SDL_Event &event);
         void update(float delta);
         void draw(void);
+        void reset(void);
 };
 
 #endif
