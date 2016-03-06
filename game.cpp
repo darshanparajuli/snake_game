@@ -33,16 +33,22 @@ Game::Game()
             glm::vec3(0.0f, 1.0f, 0.0f));
 
     m_snake = new Snake(m_world, glm::vec3(0.0f, 0.0f, 0.0f), 4);
-    m_snake->set_world_size(m_world_size.left, m_world_size.right, m_world_size.top, m_world_size.bottom);
+    m_snake->set_world_size(m_world_size);
     m_snake->set_projection_matrix(m_projection_matrix);
     m_snake->set_view_matrix(m_view_matrix);
     m_snake->init();
 
     m_food = new Food(m_world);
-    m_food->set_world_size(m_world_size.left, m_world_size.top, m_world_size.right, m_world_size.bottom);
+    m_food->set_world_size(m_world_size);
     m_food->set_projection_matrix(m_projection_matrix);
     m_food->set_view_matrix(m_view_matrix);
     m_food->init();
+
+    m_background = new Background(m_world);
+    m_background->set_world_size(m_world_size);
+    m_background->set_projection_matrix(m_projection_matrix);
+    m_background->set_view_matrix(m_view_matrix);
+    m_background->init();
 
     std::srand(time(NULL));
 }
@@ -55,6 +61,7 @@ Game::~Game()
     }
     delete m_snake;
     delete m_food;
+    delete m_background;
 }
 
 void Game::run()
@@ -171,12 +178,16 @@ void Game::update(float delta)
         }
     }
 
+    m_background->set_snake_position(m_snake->get_head_position());
+    m_background->update(delta);
+
     // for debugging
     // m_world->print();
 }
 
 void Game::draw()
 {
+    m_background->draw();
     m_food->draw();
     m_snake->draw();
 }

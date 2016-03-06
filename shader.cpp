@@ -29,7 +29,7 @@ void Shader::init(const char *file_path_vertex, const char *file_path_fragment)
 
     GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
     const GLchar* shader_src = (GLchar*) vertex_source.c_str();
-    std::cout << "compiling vertex shader " << file_path_vertex << std::endl;
+    std::cout << "compiling shader: " << file_path_vertex << std::endl;
     glShaderSource(vertex_shader, 1, &shader_src, NULL);
     glCompileShader(vertex_shader);
 
@@ -56,7 +56,7 @@ void Shader::init(const char *file_path_vertex, const char *file_path_fragment)
 
     GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
     shader_src = (GLchar*) fragment_source.c_str();
-    std::cout << "compiling fragment shader " << file_path_fragment << std::endl;
+    std::cout << "compiling shader: " << file_path_fragment << std::endl;
     glShaderSource(fragment_shader, 1, &shader_src, 0);
     glCompileShader(fragment_shader);
 
@@ -126,6 +126,11 @@ void Shader::unbind()
 void Shader::set_uniform_mat4(const char *name, const glm::mat4 &matrix)
 {
     glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, &matrix[0][0]);
+}
+
+void Shader::set_uniform_vec3(const char *name, const glm::vec3 &v)
+{
+    glUniform3fv(get_uniform_location(name), 1, &v[0]);
 }
 
 GLint Shader::get_uniform_location(const char *name)

@@ -6,6 +6,7 @@
 #include "snake.h"
 #include "food.h"
 #include "world.h"
+#include "bg.h"
 
 class Game
 {
@@ -16,6 +17,7 @@ class Game
         glm::mat4 m_view_matrix;
         WorldSize m_world_size;
 
+        Background *m_background;
         Snake *m_snake;
         Food *m_food;
         World *m_world;

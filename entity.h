@@ -29,7 +29,7 @@ class Entity
         virtual void init(void) = 0;
         virtual void update(float delta) = 0;
         virtual void draw(void) = 0;
-        void set_world_size(float left, float top, float right, float bottom);
+        void set_world_size(WorldSize world_size);
 
     public:
         inline void set_projection_matrix(const glm::mat4 &projection) { m_projection_matrix = projection; }

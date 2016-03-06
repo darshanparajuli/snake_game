@@ -1,0 +1,26 @@
+#ifndef BACKGROUND_H_
+#define BACKGROUND_H_
+
+#include "entity.h"
+#include "shader.h"
+#include "mesh.h"
+
+class Background : public Entity
+{
+    private:
+        Shader *m_shader;
+        Mesh *m_mesh;
+        glm::vec3 m_snake_pos;
+
+    public:
+        Background(World *world);
+        ~Background();
+        void init(void);
+        void update(float delta);
+        void draw(void);
+
+    public:
+        inline void set_snake_position(glm::vec3 pos) { m_snake_pos = pos; }
+};
+
+#endif

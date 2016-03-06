@@ -198,6 +198,7 @@ void Snake::move()
 
 void Snake::draw()
 {
+    snake_body *head = m_body.front();
     m_mesh->bind();
     m_shader->bind();
     for (std::deque<snake_body *>::reverse_iterator it = m_body.rbegin(); it != m_body.rend(); it++)
@@ -213,6 +214,8 @@ void Snake::draw()
         }
 
         m_shader->set_uniform_mat4("model", b->transform.apply_transform(m_model_matrix));
+        m_shader->set_uniform_vec3("head_pos", head->transform.position);
+
         m_mesh->draw();
 
         if (b->head)

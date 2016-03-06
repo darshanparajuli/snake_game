@@ -55,7 +55,9 @@ class Snake : public Entity
         void grow(int body_count = 1);
         void reset(void);
 
+    public:
         inline bool is_alive(void) const { return m_alive; }
+        inline glm::vec3 get_head_position(void) const { return m_body.front()->transform.position; }
 
     private:
         int get_opposite_direction_of(int dir);
