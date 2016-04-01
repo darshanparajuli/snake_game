@@ -10,7 +10,8 @@ in vec3 position;
 
 void main()
 {
-    color = texture(tex, tex_coord);
-    float dist = 5.0f / (length(position - head_pos) + 4.0f);
-    color *= dist;
+    float dist = length(position - head_pos);
+    float intensity = clamp(1.0f - dist / 1.0f, 0.0f, 1.0f);
+    color = texture(tex, tex_coord) * 0.8f;
+    color.a = 1.0f;
 }

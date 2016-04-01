@@ -133,6 +133,11 @@ void Shader::set_uniform_vec3(const char *name, const glm::vec3 &v)
     glUniform3fv(get_uniform_location(name), 1, &v[0]);
 }
 
+void Shader::set_uniform_vec4(const char *name, const glm::vec4 &v)
+{
+    glUniform4fv(get_uniform_location(name), 1, &v[0]);
+}
+
 GLint Shader::get_uniform_location(const char *name)
 {
     GLint location = 0;

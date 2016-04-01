@@ -11,6 +11,7 @@ class Background : public Entity
         Shader *m_shader;
         Mesh *m_mesh;
         glm::vec3 m_snake_pos;
+        glm::vec3 m_food_pos;
 
     public:
         Background(World *world);
@@ -21,6 +22,7 @@ class Background : public Entity
 
     public:
         inline void set_snake_position(glm::vec3 pos) { m_snake_pos = pos; }
+        inline void set_food_position(glm::vec3 pos) { m_food_pos = pos; }
 };
 
 #endif

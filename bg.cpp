@@ -42,7 +42,6 @@ void Background::init()
 
 void Background::update(float delta)
 {
-    m_transform.position = m_snake_pos;
 }
 
 void Background::draw()
@@ -50,8 +49,16 @@ void Background::draw()
     m_mesh->bind();
     m_shader->bind();
 
+    m_transform.position = m_snake_pos;
     m_shader->set_uniform_mat4("model", m_transform.apply_transform(m_model_matrix));
-    m_shader->set_uniform_vec3("head_pos", m_snake_pos);
+    m_shader->set_uniform_vec3("pos", m_snake_pos);
+    m_shader->set_uniform_vec4("diffuse", glm::vec4(1.0f, 1.0f, 1.0f, 0.7f));
+    m_mesh->draw();
+
+    m_transform.position = m_food_pos;
+    m_shader->set_uniform_mat4("model", m_transform.apply_transform(m_model_matrix));
+    m_shader->set_uniform_vec3("pos", m_food_pos);
+    m_shader->set_uniform_vec4("diffuse", glm::vec4(1.0f, 1.0f, 1.0f, 0.7f));
     m_mesh->draw();
 
     m_mesh->unbind();

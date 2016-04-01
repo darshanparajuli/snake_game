@@ -3,14 +3,16 @@
 out vec4 color;
 
 uniform sampler2D tex;
-uniform vec3 head_pos;
+uniform vec3 pos;
+uniform vec4 diffuse;
 
 in vec2 tex_coord;
 in vec3 position;
 
 void main()
 {
-    color = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-    float dist = 1.5f / (length(position - head_pos) + 1.5f);
-    color *= dist;
+    float radius = 3.0f;
+    float dist = length(position - pos);
+    float intensity = clamp(1.0f - dist / radius, 0.0f, 1.0f);
+    color = diffuse * intensity;
 }
