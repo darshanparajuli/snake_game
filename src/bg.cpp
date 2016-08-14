@@ -1,10 +1,8 @@
 #include "bg.h"
 
-Background::Background(World *world)
-    : Entity(world)
+Background::Background(World *world) : Entity(world)
 {
 }
-
 Background::~Background()
 {
     delete m_shader;
@@ -16,20 +14,14 @@ void Background::init()
     m_shader = new Shader();
     m_shader->init("shaders/bg.vert", "shaders/bg.frag");
 
-    glm::vec3 vertices[] = {
-        glm::vec3(m_world_size.left, m_world_size.top, 0.0f),
-        glm::vec3(m_world_size.right, m_world_size.top, 0.0f),
-        glm::vec3(m_world_size.right, m_world_size.bottom, 0.0f),
-        glm::vec3(m_world_size.left, m_world_size.bottom, 0.0f)
-    };
+    glm::vec3 vertices[] = {glm::vec3(m_world_size.left, m_world_size.top, 0.0f),
+                            glm::vec3(m_world_size.right, m_world_size.top, 0.0f),
+                            glm::vec3(m_world_size.right, m_world_size.bottom, 0.0f),
+                            glm::vec3(m_world_size.left, m_world_size.bottom, 0.0f)};
     int indices[] = {0, 1, 2, 0, 2, 3};
 
-    glm::vec2 tex_coord[] = {
-        glm::vec2(0.0f, 0.0f),
-        glm::vec2(1.0f, 0.0f),
-        glm::vec2(1.0f, 1.0f),
-        glm::vec2(0.0f, 1.0f)
-    };
+    glm::vec2 tex_coord[] = {glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 0.0f), glm::vec2(1.0f, 1.0f),
+                             glm::vec2(0.0f, 1.0f)};
 
     m_model_matrix = glm::mat4(1.0f);
     m_mesh = new Mesh(vertices, 4, indices, 6, tex_coord, 4);
@@ -43,7 +35,6 @@ void Background::init()
 void Background::update(float delta)
 {
 }
-
 void Background::draw()
 {
     m_mesh->bind();

@@ -1,8 +1,7 @@
 #include "food.h"
 #include <vector>
 
-Food::Food(World *world)
-    : Entity(world)
+Food::Food(World *world) : Entity(world)
 {
     m_eaten = false;
     m_scale = 1.0f;
@@ -12,20 +11,12 @@ Food::Food(World *world)
     m_transform.position = glm::vec3(0.0f, 0.0f, 0.0f);
     m_transform.scale = glm::vec3(1.0f, 1.0f, 1.0f);
 
-    glm::vec3 vertices[] = {
-        glm::vec3(-0.5f, 0.5f, 0.0f),
-        glm::vec3(0.5f, 0.5f, 0.0f),
-        glm::vec3(0.5f, -0.5f, 0.0f),
-        glm::vec3(-0.5f, -0.5f, 0.0f)
-    };
+    glm::vec3 vertices[] = {glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(0.5f, -0.5f, 0.0f),
+                            glm::vec3(-0.5f, -0.5f, 0.0f)};
     int indices[] = {0, 1, 2, 0, 2, 3};
 
-    glm::vec2 tex_coord[] = {
-        glm::vec2(0.0f, 0.0f),
-        glm::vec2(1.0f, 0.0f),
-        glm::vec2(1.0f, 1.0f),
-        glm::vec2(0.0f, 1.0f)
-    };
+    glm::vec2 tex_coord[] = {glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 0.0f), glm::vec2(1.0f, 1.0f),
+                             glm::vec2(0.0f, 1.0f)};
 
     m_model_matrix = glm::mat4(1.0f);
 

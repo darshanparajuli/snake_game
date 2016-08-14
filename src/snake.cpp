@@ -1,9 +1,8 @@
-#include <iostream>
 #include "snake.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
-Snake::Snake(World *world, glm::vec3 init_pos, int body_count)
-    : Entity(world)
+Snake::Snake(World *world, glm::vec3 init_pos, int body_count) : Entity(world)
 {
     m_size = 1.0f;
     m_delta_size = 0.0f;
@@ -15,20 +14,12 @@ Snake::Snake(World *world, glm::vec3 init_pos, int body_count)
     m_body_count = body_count;
     m_init_pos = init_pos;
 
-    glm::vec3 vertices[] = {
-        glm::vec3(-0.5f, 0.5f, 0.0f),
-        glm::vec3(0.5f, 0.5f, 0.0f),
-        glm::vec3(0.5f, -0.5f, 0.0f),
-        glm::vec3(-0.5f, -0.5f, 0.0f)
-    };
+    glm::vec3 vertices[] = {glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(0.5f, -0.5f, 0.0f),
+                            glm::vec3(-0.5f, -0.5f, 0.0f)};
     int indices[] = {0, 1, 2, 0, 2, 3};
 
-    glm::vec2 tex_coord[] = {
-        glm::vec2(0.0f, 0.0f),
-        glm::vec2(1.0f, 0.0f),
-        glm::vec2(1.0f, 1.0f),
-        glm::vec2(0.0f, 1.0f)
-    };
+    glm::vec2 tex_coord[] = {glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 0.0f), glm::vec2(1.0f, 1.0f),
+                             glm::vec2(0.0f, 1.0f)};
 
     m_mesh = new Mesh(vertices, 4, indices, 6, tex_coord, 4);
     m_shader = new Shader();
@@ -231,7 +222,6 @@ void Snake::draw()
     m_mesh->unbind();
 }
 
-
 void Snake::set_move_direction(int dir)
 {
     if (m_body.front()->dir != get_opposite_direction_of(dir))
@@ -296,4 +286,3 @@ void Snake::grow(int body_count)
         m_body.push_back(b);
     }
 }
-

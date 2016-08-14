@@ -1,10 +1,9 @@
 #include "texture.h"
-#include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <iostream>
 
-Texture::Texture(const char *file_path)
-    : m_id(0), m_path(file_path), m_width(0), m_height(0)
+Texture::Texture(const char *file_path) : m_id(0), m_path(file_path), m_width(0), m_height(0)
 {
 }
 

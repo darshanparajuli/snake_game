@@ -1,7 +1,7 @@
 #include "game.h"
-#include <iostream>
-#include <glm/gtc/matrix_transform.hpp>
 #include <time.h>
+#include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
 Game::Game()
 {
@@ -27,10 +27,10 @@ Game::Game()
     m_world_size.right = world_width / 2.0f;
     m_world_size.bottom = -world_height / 2.0f;
 
-    m_projection_matrix = glm::ortho(m_world_size.left, m_world_size.right, m_world_size.bottom,
-                     m_world_size.top, -1.0f, 100.0f);
-    m_view_matrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 100.0f), glm::vec3(0.0f, 0.0f, 0.0f),
-                glm::vec3(0.0f, 1.0f, 0.0f));
+    m_projection_matrix =
+        glm::ortho(m_world_size.left, m_world_size.right, m_world_size.bottom, m_world_size.top, -1.0f, 100.0f);
+    m_view_matrix =
+        glm::lookAt(glm::vec3(0.0f, 0.0f, 100.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
     m_snake = new Snake(m_world, glm::vec3(0.0f, 0.0f, 0.0f), 4);
     m_snake->set_world_size(m_world_size);
@@ -79,21 +79,21 @@ void Game::run()
             {
                 switch (event.window.event)
                 {
-        case SDL_WINDOWEVENT_RESIZED:
-        {
-            m_window->resize(event.window.data1, event.window.data2);
-        }
-        break;
-        case SDL_WINDOWEVENT_FOCUS_GAINED:
-        {
-            m_paused = false;
-        }
-        break;
-        case SDL_WINDOWEVENT_FOCUS_LOST:
-        {
-            m_paused = true;
-        }
-        break;
+                    case SDL_WINDOWEVENT_RESIZED:
+                    {
+                        m_window->resize(event.window.data1, event.window.data2);
+                    }
+                    break;
+                    case SDL_WINDOWEVENT_FOCUS_GAINED:
+                    {
+                        m_paused = false;
+                    }
+                    break;
+                    case SDL_WINDOWEVENT_FOCUS_LOST:
+                    {
+                        m_paused = true;
+                    }
+                    break;
                 }
             }
             else
@@ -116,48 +116,48 @@ void Game::handle_input(const SDL_Event &event)
     {
         switch (event.key.keysym.sym)
         {
-    case SDLK_UP:
-    {
-        m_snake->set_move_direction(Snake::NORTH);
-        m_initial_pause = false;
-    }
-    break;
-    case SDLK_DOWN:
-    {
-        m_snake->set_move_direction(Snake::SOUTH);
-        m_initial_pause = false;
-    }
-    break;
-    case SDLK_LEFT:
-    {
-        m_snake->set_move_direction(Snake::WEST);
-        m_initial_pause = false;
-    }
-    break;
-    case SDLK_RIGHT:
-    {
-        m_snake->set_move_direction(Snake::EAST);
-        m_initial_pause = false;
-    }
-    break;
-    case SDLK_r:
-    {
-        if (!m_snake->is_alive())
-        {
-        reset();
-        }
-    }
-    break;
-    case SDLK_q:
-    {
-        m_running = false;
-    }
-    break;
-    case SDLK_p:
-    {
-        m_paused = !m_paused;
-    }
-    break;
+            case SDLK_UP:
+            {
+                m_snake->set_move_direction(Snake::NORTH);
+                m_initial_pause = false;
+            }
+            break;
+            case SDLK_DOWN:
+            {
+                m_snake->set_move_direction(Snake::SOUTH);
+                m_initial_pause = false;
+            }
+            break;
+            case SDLK_LEFT:
+            {
+                m_snake->set_move_direction(Snake::WEST);
+                m_initial_pause = false;
+            }
+            break;
+            case SDLK_RIGHT:
+            {
+                m_snake->set_move_direction(Snake::EAST);
+                m_initial_pause = false;
+            }
+            break;
+            case SDLK_r:
+            {
+                if (!m_snake->is_alive())
+                {
+                    reset();
+                }
+            }
+            break;
+            case SDLK_q:
+            {
+                m_running = false;
+            }
+            break;
+            case SDLK_p:
+            {
+                m_paused = !m_paused;
+            }
+            break;
         }
     }
 }

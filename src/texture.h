@@ -5,18 +5,18 @@
 
 class Texture
 {
-    private:
-        GLuint m_id;
-        const char *m_path;
-        int m_width;
-        int m_height;
+private:
+    GLuint m_id;
+    const char *m_path;
+    int m_width;
+    int m_height;
 
-    public:
-        Texture(const char *file_path);
-        ~Texture();
-        void load();
-        void bind();
-        void unbind();
+public:
+    Texture(const char *file_path);
+    ~Texture();
+    void load();
+    void bind();
+    void unbind();
 };
 
 #endif

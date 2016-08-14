@@ -1,15 +1,13 @@
 #include "shader.h"
-#include <GL/glew.h>
 #include <GL/gl.h>
-#include <iostream>
+#include <GL/glew.h>
 #include <fstream>
+#include <iostream>
 #include <vector>
 
-Shader::Shader()
-    : m_program(0)
+Shader::Shader() : m_program(0)
 {
 }
-
 Shader::~Shader()
 {
     if (m_program)
@@ -28,7 +26,7 @@ void Shader::init(const char *file_path_vertex, const char *file_path_fragment)
     }
 
     GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    const GLchar* shader_src = (GLchar*) vertex_source.c_str();
+    const GLchar *shader_src = (GLchar *) vertex_source.c_str();
     std::cout << "compiling shader: " << file_path_vertex << std::endl;
     glShaderSource(vertex_shader, 1, &shader_src, NULL);
     glCompileShader(vertex_shader);
@@ -43,8 +41,7 @@ void Shader::init(const char *file_path_vertex, const char *file_path_fragment)
         glGetShaderInfoLog(vertex_shader, max_length, &max_length, &info_log[0]);
         glDeleteShader(vertex_shader);
 
-        for (std::vector<GLchar>::const_iterator i = info_log.begin();
-             i != info_log.end(); i++)
+        for (std::vector<GLchar>::const_iterator i = info_log.begin(); i != info_log.end(); i++)
         {
             std::cout << *i;
         }
@@ -53,9 +50,8 @@ void Shader::init(const char *file_path_vertex, const char *file_path_fragment)
         return;
     }
 
-
     GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    shader_src = (GLchar*) fragment_source.c_str();
+    shader_src = (GLchar *) fragment_source.c_str();
     std::cout << "compiling shader: " << file_path_fragment << std::endl;
     glShaderSource(fragment_shader, 1, &shader_src, 0);
     glCompileShader(fragment_shader);
@@ -70,8 +66,7 @@ void Shader::init(const char *file_path_vertex, const char *file_path_fragment)
         glGetShaderInfoLog(fragment_shader, max_length, &max_length, &info_log[0]);
         glDeleteShader(fragment_shader);
 
-        for (std::vector<GLchar>::const_iterator i = info_log.begin();
-             i != info_log.end(); i++)
+        for (std::vector<GLchar>::const_iterator i = info_log.begin(); i != info_log.end(); i++)
         {
             std::cout << *i;
         }
@@ -99,8 +94,7 @@ void Shader::init(const char *file_path_vertex, const char *file_path_fragment)
         glDeleteShader(fragment_shader);
         m_program = 0;
 
-        for (std::vector<GLchar>::const_iterator i = info_log.begin();
-             i != info_log.end(); i++)
+        for (std::vector<GLchar>::const_iterator i = info_log.begin(); i != info_log.end(); i++)
         {
             std::cout << *i;
         }
@@ -117,12 +111,10 @@ void Shader::bind()
 {
     glUseProgram(m_program);
 }
-
 void Shader::unbind()
 {
     glUseProgram(0);
 }
-
 void Shader::set_uniform_mat4(const char *name, const glm::mat4 &matrix)
 {
     glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, &matrix[0][0]);
